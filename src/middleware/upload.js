@@ -1,16 +1,12 @@
 import multer from "multer"
-import path from "path"
 
-const storage = multer.diskStorage({
-  destination: "uploads/",
+const storage = multer.memoryStorage()
 
-  filename: (_, file, cb) => {
-    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9)
-
-    cb(null, `${uniqueName}${path.extname(file.originalname)}`)
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 25 * 1024 * 1024, // 25 MB
   },
 })
-
-const upload = multer({ storage })
 
 export default upload

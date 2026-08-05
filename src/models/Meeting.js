@@ -19,8 +19,24 @@ const meetingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["uploaded", "processing", "completed", "failed"],
+      enum: [
+        "uploaded",
+        "transcribing",
+        "transcribed",
+        "summarizing",
+        "completed",
+        "failed",
+      ],
       default: "uploaded",
+    },
+    transcript: {
+      type: String,
+      default: "",
+    },
+
+    summary: {
+      type: String,
+      default: "",
     },
 
     createdBy: {
