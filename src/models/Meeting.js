@@ -12,6 +12,11 @@ const meetingSchema = new mongoose.Schema(
       required: true,
     },
 
+    cloudinaryId: {
+      type: String,
+      required: true,
+    },
+
     duration: {
       type: Number,
       default: 0,
@@ -29,6 +34,7 @@ const meetingSchema = new mongoose.Schema(
       ],
       default: "uploaded",
     },
+
     transcript: {
       type: String,
       default: "",
@@ -37,6 +43,15 @@ const meetingSchema = new mongoose.Schema(
     summary: {
       type: String,
       default: "",
+    },
+
+    actionItems: {
+      type: [String],
+      default: [],
+    },
+
+    transcriptGeneratedAt: {
+      type: Date,
     },
 
     createdBy: {

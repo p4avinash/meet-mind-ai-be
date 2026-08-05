@@ -1,7 +1,7 @@
 import STATUS_CODES from "../constants/statusCodes.js"
+import Meeting from "../models/Meeting.js"
 import AppError from "../utils/AppError.js"
 
-import Meeting from "../models/Meeting.js"
 import uploadToCloudinary from "../utils/uploadToCloudinary.js"
 
 export const uploadMeeting = async (file, body, userId) => {
@@ -29,6 +29,22 @@ export const uploadMeeting = async (file, body, userId) => {
   return {
     success: true,
     message: "Meeting uploaded successfully.",
+    data: meeting,
+  }
+}
+
+export const getMeetingById = async (meetingId, userId) => {
+  const meeting = await Meeting.findOne({
+    _id: meetingId,
+    createdBy: userId,
+  })
+
+  if (!meeting) {
+    throw new AppError("Meeting not found.", STATUS_CODES.NOT_FOUND)
+  }
+
+  return {
+    success: true,
     data: meeting,
   }
 }
