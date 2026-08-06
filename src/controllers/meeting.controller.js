@@ -1,6 +1,11 @@
 import STATUS_CODES from "../constants/statusCodes.js"
 
-import { uploadMeeting, getMeetingById } from "../services/meeting.service.js"
+import {
+  uploadMeeting,
+  getMeetingById,
+  getMeetings,
+  renameMeeting,
+} from "../services/meeting.service.js"
 
 export const upload = async (req, res, next) => {
   try {
@@ -15,6 +20,30 @@ export const upload = async (req, res, next) => {
 export const getById = async (req, res, next) => {
   try {
     const response = await getMeetingById(req.params.id, req.user.id)
+
+    res.status(STATUS_CODES.OK).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getAllMeetings = async (req, res, next) => {
+  try {
+    const response = await getMeetings(req.user.id)
+
+    res.status(STATUS_CODES.OK).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const rename = async (req, res, next) => {
+  try {
+    const response = await renameMeeting(
+      req.params.id,
+      req.body.title,
+      req.user.id,
+    )
 
     res.status(STATUS_CODES.OK).json(response)
   } catch (error) {

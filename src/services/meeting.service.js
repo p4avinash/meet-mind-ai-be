@@ -33,6 +33,22 @@ export const uploadMeeting = async (file, body, userId) => {
   }
 }
 
+export const getMeetings = async (userId) => {
+  const meetings = await Meeting.find({
+    createdBy: userId,
+  })
+    .sort({
+      createdAt: -1,
+    })
+    .select("-transcript -summary")
+
+  return {
+    success: true,
+    message: "Meetings fetched successfully.",
+    data: meetings,
+  }
+}
+
 export const getMeetingById = async (meetingId, userId) => {
   const meeting = await Meeting.findOne({
     _id: meetingId,
@@ -45,6 +61,27 @@ export const getMeetingById = async (meetingId, userId) => {
 
   return {
     success: true,
+    data: meeting,
+  }
+}
+
+export const renameMeeting = async (meetingId, title, userId) => {
+  const meeting = await Meeting.findOne({
+    _id: meetingId,
+    createdBy: userId,
+  })
+
+  if (!meeting) {
+    throw new AppError("Meeting not found.", STATUS_CODES.NOT_FOUND)
+  }
+
+  meeting.title = title
+
+  await meeting.save()
+
+  return {
+    success: true,
+    message: "Meeting renamed successfully.",
     data: meeting,
   }
 }
