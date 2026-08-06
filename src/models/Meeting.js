@@ -27,9 +27,9 @@ const meetingSchema = new mongoose.Schema(
       enum: [
         "uploaded",
         "transcribing",
-        "transcribed",
         "summarizing",
-        "processing",
+        "generating_action_items",
+        "sending_email",
         "completed",
         "failed",
       ],

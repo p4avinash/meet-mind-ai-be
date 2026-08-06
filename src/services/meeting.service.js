@@ -3,6 +3,7 @@ import Meeting from "../models/Meeting.js"
 import AppError from "../utils/AppError.js"
 
 import uploadToCloudinary from "../utils/uploadToCloudinary.js"
+import { processMeeting } from "./aiPipeline.service.js"
 
 export const uploadMeeting = async (file, body, userId) => {
   if (!file) {
@@ -25,6 +26,18 @@ export const uploadMeeting = async (file, body, userId) => {
       STATUS_CODES.INTERNAL_SERVER_ERROR,
     )
   }
+
+  /**
+   * Start AI pipeline in background.
+   *
+   * User doesn't need to wait for:
+   * Transcript
+   * Summary
+   * Action Items
+   */
+  setImmediate(() => {
+    processMeeting(meeting._id)
+  })
 
   return {
     success: true,
