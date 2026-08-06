@@ -85,3 +85,21 @@ export const renameMeeting = async (meetingId, title, userId) => {
     data: meeting,
   }
 }
+
+export const deleteMeeting = async (meetingId, userId) => {
+  const meeting = await Meeting.findOne({
+    _id: meetingId,
+    createdBy: userId,
+  })
+
+  if (!meeting) {
+    throw new AppError("Meeting not found.", STATUS_CODES.NOT_FOUND)
+  }
+
+  await Meeting.findByIdAndDelete(meetingId)
+
+  return {
+    success: true,
+    message: "Meeting deleted successfully.",
+  }
+}

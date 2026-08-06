@@ -8,6 +8,7 @@ import {
   getById,
   getAllMeetings,
   rename,
+  remove,
 } from "../controllers/meeting.controller.js"
 
 const router = express.Router()
@@ -16,5 +17,6 @@ router.get("/:id", auth, getById)
 router.post("/upload", auth, uploadMiddleware.single("audio"), upload)
 router.get("/", auth, getAllMeetings)
 router.patch("/:id", auth, rename)
+router.delete("/:id", auth, remove)
 
 export default router

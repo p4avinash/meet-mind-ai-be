@@ -50,3 +50,15 @@ export const rename = async (req, res, next) => {
     next(error)
   }
 }
+
+import { deleteMeeting } from "../services/meeting.service.js"
+
+export const remove = async (req, res, next) => {
+  try {
+    const response = await deleteMeeting(req.params.id, req.user.id)
+
+    res.status(STATUS_CODES.OK).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
