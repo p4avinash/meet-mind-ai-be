@@ -29,6 +29,7 @@ const meetingSchema = new mongoose.Schema(
         "transcribing",
         "transcribed",
         "summarizing",
+        "processing",
         "completed",
         "failed",
       ],
