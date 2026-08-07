@@ -4,6 +4,7 @@ import AppError from "../utils/AppError.js"
 
 import uploadToCloudinary from "../utils/uploadToCloudinary.js"
 import { processMeeting } from "./aiPipeline.service.js"
+import User from "../models/User.js"
 
 export const uploadMeeting = async (file, body, userId) => {
   if (!file) {
@@ -11,13 +12,16 @@ export const uploadMeeting = async (file, body, userId) => {
   }
 
   const uploadedFile = await uploadToCloudinary(file.buffer)
+  const user = await User.findById(userId)
+  const deliveryEmail =
+    body.deliveryEmail || user.defaultDeliveryEmail || user.email
 
   const meeting = await Meeting.create({
     title: "Untitled Meeting",
     audioUrl: uploadedFile.secure_url,
     cloudinaryId: uploadedFile.public_id,
     duration: Number(body.duration),
-    deliveryEmail: body.deliveryEmail,
+    deliveryEmail: deliveryEmail,
     createdBy: userId,
   })
 
@@ -115,5 +119,46 @@ export const deleteMeeting = async (meetingId, userId) => {
   return {
     success: true,
     message: "Meeting deleted successfully.",
+  }
+}
+
+export const getMeetingStats = async (userId) => {
+  const meetings = await Meeting.find({
+    createdBy: userId,
+  }).select("duration status")
+
+  const totalMeetings = meetings.length
+
+  const completedMeetings = meetings.filter(
+    (meeting) => meeting.status === "completed",
+  ).length
+
+  const processingMeetings = meetings.filter((meeting) =>
+    [
+      "uploaded",
+      "transcribing",
+      "summarizing",
+      "generating_action_items",
+      "sending_email",
+    ].includes(meeting.status),
+  ).length
+
+  const failedMeetings = meetings.filter(
+    (meeting) => meeting.status === "failed",
+  ).length
+
+  const totalRecordingMinutes = Math.round(
+    meetings.reduce((total, meeting) => total + meeting.duration, 0) / 60,
+  )
+
+  return {
+    success: true,
+    data: {
+      totalMeetings,
+      completedMeetings,
+      processingMeetings,
+      failedMeetings,
+      totalRecordingMinutes,
+    },
   }
 }

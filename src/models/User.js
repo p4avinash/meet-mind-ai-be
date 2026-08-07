@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    defaultDeliveryEmail: {
+      type: String,
+      default: "",
+      trim: true,
+      lowercase: true,
+    },
+
     settings: {
       autoProcessMeeting: {
         type: Boolean,

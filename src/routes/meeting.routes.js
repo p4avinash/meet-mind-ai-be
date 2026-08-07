@@ -9,13 +9,15 @@ import {
   getAllMeetings,
   rename,
   remove,
+  stats,
 } from "../controllers/meeting.controller.js"
 
 const router = express.Router()
 
-router.get("/:id", auth, getById)
 router.post("/upload", auth, uploadMiddleware.single("audio"), upload)
+router.get("/stats", auth, stats)
 router.get("/", auth, getAllMeetings)
+router.get("/:id", auth, getById)
 router.patch("/:id", auth, rename)
 router.delete("/:id", auth, remove)
 

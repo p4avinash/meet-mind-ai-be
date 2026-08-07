@@ -5,6 +5,7 @@ import {
   getMeetingById,
   getMeetings,
   renameMeeting,
+  getMeetingStats,
 } from "../services/meeting.service.js"
 
 export const upload = async (req, res, next) => {
@@ -56,6 +57,16 @@ import { deleteMeeting } from "../services/meeting.service.js"
 export const remove = async (req, res, next) => {
   try {
     const response = await deleteMeeting(req.params.id, req.user.id)
+
+    res.status(STATUS_CODES.OK).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const stats = async (req, res, next) => {
+  try {
+    const response = await getMeetingStats(req.user.id)
 
     res.status(STATUS_CODES.OK).json(response)
   } catch (error) {

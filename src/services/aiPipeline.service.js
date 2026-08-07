@@ -60,20 +60,19 @@ export const processMeeting = async (meetingId) => {
     await meeting.save()
 
     await sendMeetingEmail({
-      email: meeting.deliveryEmail,
-      meetingTitle: meeting.title,
+      to: meeting.deliveryEmail || meeting.createdBy.email,
+      title: meeting.title,
       summary: meeting.summary,
       actionItems: meeting.actionItems,
     })
 
-    /**
-     * DONE
-     */
-
     meeting.status = "completed"
     await meeting.save()
   } catch (error) {
+    console.error("============== ERROR ==============")
     console.error(error)
+    console.error(error.stack)
+    console.error("===================================")
 
     await Meeting.findByIdAndUpdate(meetingId, {
       status: "failed",
