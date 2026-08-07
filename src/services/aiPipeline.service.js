@@ -1,4 +1,5 @@
 import Meeting from "../models/Meeting.js"
+import sendMeetingEmail from "../utils/sendMeetingEmail.js"
 
 import {
   generateTranscript,
@@ -8,13 +9,12 @@ import {
 
 export const processMeeting = async (meetingId) => {
   try {
-    const meeting = await Meeting.findById(meetingId)
+    const meeting = await Meeting.findById(meetingId).populate("createdBy")
 
     if (!meeting) return
 
     /**
      * STEP 1
-     * Generate Transcript
      */
 
     meeting.status = "transcribing"
@@ -24,9 +24,10 @@ export const processMeeting = async (meetingId) => {
 
     meeting.transcript = transcript
 
+    await meeting.save()
+
     /**
      * STEP 2
-     * Generate Summary
      */
 
     meeting.status = "summarizing"
@@ -36,9 +37,10 @@ export const processMeeting = async (meetingId) => {
 
     meeting.summary = summary
 
+    await meeting.save()
+
     /**
      * STEP 3
-     * Generate Action Items
      */
 
     meeting.status = "generating_action_items"
@@ -48,20 +50,24 @@ export const processMeeting = async (meetingId) => {
 
     meeting.actionItems = actionItems
 
-    /**
-     * DONE
-     */
+    await meeting.save()
 
     /**
      * STEP 4
-     * Email (coming next sprint)
      */
 
     meeting.status = "sending_email"
     await meeting.save()
 
+    await sendMeetingEmail({
+      email: meeting.deliveryEmail,
+      meetingTitle: meeting.title,
+      summary: meeting.summary,
+      actionItems: meeting.actionItems,
+    })
+
     /**
-     * Simulate email sending for now.
+     * DONE
      */
 
     meeting.status = "completed"

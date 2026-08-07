@@ -55,6 +55,13 @@ const meetingSchema = new mongoose.Schema(
       type: Date,
     },
 
+    deliveryEmail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

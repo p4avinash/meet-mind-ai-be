@@ -17,6 +17,7 @@ export const uploadMeeting = async (file, body, userId) => {
     audioUrl: uploadedFile.secure_url,
     cloudinaryId: uploadedFile.public_id,
     duration: Number(body.duration),
+    deliveryEmail: body.deliveryEmail,
     createdBy: userId,
   })
 

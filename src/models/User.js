@@ -20,6 +20,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    settings: {
+      autoProcessMeeting: {
+        type: Boolean,
+        default: true,
+      },
+
+      autoSendEmail: {
+        type: Boolean,
+        default: true,
+      },
+    },
   },
   {
     timestamps: true,
