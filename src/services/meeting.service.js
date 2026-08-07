@@ -51,15 +51,31 @@ export const uploadMeeting = async (file, body, userId) => {
   }
 }
 
-export const getMeetings = async (userId, page = 1, limit = 10) => {
+export const getMeetings = async (
+  userId,
+  page = 1,
+  limit = 10,
+  search = "",
+) => {
   page = Number(page)
   limit = Number(limit)
 
   const skip = (page - 1) * limit
 
-  const meetings = await Meeting.find({
+  const query = {
     createdBy: userId,
-  })
+  }
+
+  search = search || ""
+
+  if (search.trim()) {
+    query.title = {
+      $regex: search,
+      $options: "i",
+    }
+  }
+
+  const meetings = await Meeting.find(query)
     .sort({
       createdAt: -1,
     })
@@ -67,9 +83,7 @@ export const getMeetings = async (userId, page = 1, limit = 10) => {
     .limit(limit)
     .select("-transcript -summary")
 
-  const totalItems = await Meeting.countDocuments({
-    createdBy: userId,
-  })
+  const totalItems = await Meeting.countDocuments(query)
 
   const totalPages = Math.ceil(totalItems / limit)
 

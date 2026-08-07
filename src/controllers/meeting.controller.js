@@ -34,6 +34,7 @@ export const getAllMeetings = async (req, res, next) => {
       req.user.id,
       req.query.page,
       req.query.limit,
+      req.query.search,
     )
 
     res.status(STATUS_CODES.OK).json(response)
