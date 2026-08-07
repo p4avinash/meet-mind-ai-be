@@ -51,19 +51,40 @@ export const uploadMeeting = async (file, body, userId) => {
   }
 }
 
-export const getMeetings = async (userId) => {
+export const getMeetings = async (userId, page = 1, limit = 10) => {
+  page = Number(page)
+  limit = Number(limit)
+
+  const skip = (page - 1) * limit
+
   const meetings = await Meeting.find({
     createdBy: userId,
   })
     .sort({
       createdAt: -1,
     })
+    .skip(skip)
+    .limit(limit)
     .select("-transcript -summary")
+
+  const totalItems = await Meeting.countDocuments({
+    createdBy: userId,
+  })
+
+  const totalPages = Math.ceil(totalItems / limit)
 
   return {
     success: true,
     message: "Meetings fetched successfully.",
     data: meetings,
+    pagination: {
+      page,
+      limit,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
   }
 }
 

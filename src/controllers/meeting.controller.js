@@ -30,7 +30,11 @@ export const getById = async (req, res, next) => {
 
 export const getAllMeetings = async (req, res, next) => {
   try {
-    const response = await getMeetings(req.user.id)
+    const response = await getMeetings(
+      req.user.id,
+      req.query.page,
+      req.query.limit,
+    )
 
     res.status(STATUS_CODES.OK).json(response)
   } catch (error) {
