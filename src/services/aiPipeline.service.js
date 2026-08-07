@@ -33,9 +33,10 @@ export const processMeeting = async (meetingId) => {
     meeting.status = "summarizing"
     await meeting.save()
 
-    const summary = await generateSummary(transcript)
+    const result = await generateSummary(transcript)
 
-    meeting.summary = summary
+    meeting.title = result.title
+    meeting.summary = result.summary
 
     await meeting.save()
 
@@ -69,10 +70,7 @@ export const processMeeting = async (meetingId) => {
     meeting.status = "completed"
     await meeting.save()
   } catch (error) {
-    console.error("============== ERROR ==============")
     console.error(error)
-    console.error(error.stack)
-    console.error("===================================")
 
     await Meeting.findByIdAndUpdate(meetingId, {
       status: "failed",

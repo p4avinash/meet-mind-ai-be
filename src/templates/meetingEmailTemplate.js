@@ -1,4 +1,11 @@
 const meetingEmailTemplate = ({ title, summary, actionItems = [] }) => {
+  const safeTitle = title || "Meeting Summary"
+  const safeSummary = (summary || "").replace(/\n/g, "<br/>")
+  const safeActionItems =
+    actionItems.length > 0
+      ? actionItems.map((item) => `<li>${item}</li>`).join("")
+      : `<li>No action items identified.</li>`
+
   return `
 <!DOCTYPE html>
 <html>
@@ -83,9 +90,9 @@ li{
 <div class="content">
 
 <div class="card">
-<h2>📌 ${title}</h2>
+<h2>📌 ${safeTitle}</h2>
 
-<p>${summary.replace(/\n/g, "<br/>")}</p>
+<p>${safeSummary}</p>
 </div>
 
 <div class="card">
@@ -94,7 +101,7 @@ li{
 
 <ul>
 
-${actionItems.map((item) => `<li>${item}</li>`).join("")}
+${safeActionItems}
 
 </ul>
 

@@ -20,14 +20,44 @@ export const generateTranscript = async (audioUrl) => {
 /**
  * Generate Summary
  */
+/**
+ * Generate Summary
+ */
+/**
+ * Generate Meeting Title + Summary
+ */
 export const generateSummary = async (transcript) => {
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
       {
         role: "system",
-        content:
-          "You are an AI meeting assistant. Generate a concise meeting summary.",
+        content: `
+You are an expert AI meeting assistant.
+
+Analyze the meeting transcript.
+
+Return ONLY valid JSON.
+
+Example:
+
+{
+  "title": "React Performance Review",
+  "summary": "The team discussed React performance optimizations, lazy loading, memoization, and agreed on implementation tasks."
+}
+
+Rules:
+
+- Title should be between 3 and 7 words.
+- Make it descriptive.
+- Never use generic titles like:
+  - Meeting
+  - Discussion
+  - Conversation
+  - Meeting Notes
+- Summary should be concise (3–6 sentences).
+- Return ONLY valid JSON.
+`,
       },
       {
         role: "user",
@@ -36,7 +66,18 @@ export const generateSummary = async (transcript) => {
     ],
   })
 
-  return response.choices[0].message.content
+  const content = response.choices[0].message.content
+
+  try {
+    return JSON.parse(content)
+  } catch (error) {
+    console.error("Failed to parse summary JSON:", content)
+
+    return {
+      title: "Meeting Summary",
+      summary: content,
+    }
+  }
 }
 
 /**
