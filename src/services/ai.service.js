@@ -28,7 +28,7 @@ export const generateTranscript = async (audioUrl) => {
  */
 export const generateSummary = async (transcript) => {
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
     messages: [
       {
         role: "system",
